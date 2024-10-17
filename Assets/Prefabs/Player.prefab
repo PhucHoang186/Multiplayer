@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3597942235721513147}
   - component: {fileID: 2672951940598453041}
   - component: {fileID: 82773239494642441}
+  - component: {fileID: 976648117064297421}
   - component: {fileID: 4511992633063341855}
   - component: {fileID: 2786623610161509941}
   - component: {fileID: 4828960362250827669}
@@ -70,8 +71,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17975260a77d70e45a4e905c62603813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animationHandler: {fileID: 0}
+  animationHandler: {fileID: 976648117064297421}
   movementHandler: {fileID: 4511992633063341855}
+--- !u!114 &976648117064297421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304880096873401831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38c794a499479714b883458a0af9196b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 1426604079480847164}
 --- !u!114 &4511992633063341855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,6 +152,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3597942235721513147}
     m_Modifications:
+    - target: {fileID: 6268617891417236092, guid: 2dfbb63c9cdf7504faf4ff26b0581598,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8189980434977739222, guid: 2dfbb63c9cdf7504faf4ff26b0581598,
         type: 3}
       propertyPath: m_Name

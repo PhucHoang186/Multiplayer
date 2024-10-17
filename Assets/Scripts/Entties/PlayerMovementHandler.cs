@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,10 +13,16 @@ namespace Entity
         private Vector3 moveVec;
         private Vector3 rotateDir;
         private Camera mainCam;
+        private Action<Vector3> onMovementUpdateCb;
 
         void Start()
         {
             mainCam = Camera.main;
+        }
+
+        public void InitCallbacks(Action<Vector3> onMovementUpdate)
+        {
+            onMovementUpdateCb = onMovementUpdate;
         }
 
         public void GetInput()
@@ -29,7 +36,7 @@ namespace Entity
             rotateDir = (mousePosition - transform.position).normalized;
         }
 
-        void Update()
+        public void UpdateMovement()
         {
             GetInput();
             ControlMovement();
@@ -39,6 +46,7 @@ namespace Entity
         {
             transform.position = Vector3.Lerp(transform.position, transform.position + moveVec * moveSpeed, Time.deltaTime);
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(rotateDir), Time.deltaTime * rotateSpeed);
+            onMovementUpdateCb?.Invoke(moveVec);
         }
     }
 }
