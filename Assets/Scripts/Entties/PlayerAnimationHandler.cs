@@ -38,5 +38,10 @@ namespace Entity
             yield return new WaitForSecondsRealtime(stateInfo.length);
             finishCb?.Invoke();
         }
+
+        public void OnGetHit()
+        {
+            PlayAnim(PlayerAnim.Hit);
+        }
     }
 }

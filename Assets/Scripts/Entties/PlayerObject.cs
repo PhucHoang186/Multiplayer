@@ -5,15 +5,31 @@ using UnityEngine;
 
 namespace Entity
 {
+    public enum PlayerState
+    {
+        Normal,
+        Attack,
+        Hit,
+        Invincible,
+
+    }
+
     public class PlayerObject : NetworkBehaviour
     {
+        [Header("References")]
         [SerializeField] PlayerAnimationHandler animationHandler;
         [SerializeField] PlayerMovementHandler movementHandler;
-        private bool moveableState;
+        [SerializeField] PlayerEffectHandler effectHandler;
+        [SerializeField] CollissionDetection collissionDetection;
+        [Header("Values")]
+        [SerializeField] float knockBackForce;
+        [SerializeField] float knockBackTime;
+
+        private PlayerState currentState;
 
         public override void OnNetworkSpawn()
         {
-            moveableState = true;
+            SetState(PlayerState.Normal);
             base.OnNetworkSpawn();
             if (!IsLocalPlayer)
             {
@@ -26,30 +42,63 @@ namespace Entity
             }
         }
 
+        public void OnGetHit(Vector3 dir)
+        {
+            StartCoroutine(CorOnGetHit(dir));
+        }
+
+        private IEnumerator CorOnGetHit(Vector3 dir)
+        {
+            SetState(PlayerState.Hit);
+            movementHandler.OnGetHit(dir, knockBackForce, knockBackTime);
+            animationHandler.OnGetHit();
+            effectHandler.OnGetHit();
+
+            yield return new WaitForSeconds(0.7f);
+            SetState(PlayerState.Normal);
+        }
+
         public void Update()
         {
             if (!IsLocalPlayer)
                 return;
 
-            movementHandler.UpdateMovement();
-
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
             {
-                if (!moveableState)
+                if (!IsState(PlayerState.Normal))
                     return;
-                moveableState = false;
-                animationHandler?.PlayAnim(PlayerAnim.Attack, finishCb: () => moveableState = true);
+
+                SetState(PlayerState.Attack);
+                animationHandler?.PlayAnim(PlayerAnim.Attack, finishCb: () => SetState(PlayerState.Normal));
             }
+        }
+
+        private void FixedUpdate()
+        {
+            if (!IsLocalPlayer)
+                return;
+
+            movementHandler.UpdateMovement();
         }
 
         public void OnMovementUpdate(Vector3 movement)
         {
-            if (!moveableState)
+            if (IsState(PlayerState.Hit) || IsState(PlayerState.Attack))
                 return;
             if (movement != Vector3.zero)
                 animationHandler?.PlayAnim(PlayerAnim.Move);
             else
                 animationHandler?.PlayAnim(PlayerAnim.Idle);
+        }
+
+        private bool IsState(PlayerState state)
+        {
+            return currentState == state;
+        }
+
+        private void SetState(PlayerState state)
+        {
+            this.currentState = state;
         }
     }
 }
